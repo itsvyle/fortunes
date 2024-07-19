@@ -97,10 +97,43 @@ func GiveFortune() {
 	if err != nil {
 		panic(err)
 	}
-	print("From: " + fortunes[oneByte[0]].name)
+	fortune := fortunes[oneByte[0]]
+
 	if *showSourceName {
+		println("From: " + fortune.name + "\n")
 	}
 
+	_, err = file.Read(fourBytes)
+	if err != nil {
+		panic(err)
+	}
+	fortuneOffset := readInt32(fourBytes)
+
+	_, err = file.Read(fourBytes)
+	if err != nil {
+		panic(err)
+	}
+	fortuneLength := readInt32(fourBytes)
+
+	fortuneFilePath := *path + "/" + fortune.name
+	fortuneFile, err := os.OpenFile(fortuneFilePath, os.O_RDONLY, 0644)
+	if err != nil {
+		panic(err)
+	}
+	defer fortuneFile.Close()
+
+	_, err = fortuneFile.Seek(int64(fortuneOffset), 0)
+	if err != nil {
+		panic(err)
+	}
+
+	fortuneContent := make([]byte, fortuneLength)
+	_, err = fortuneFile.Read(fortuneContent)
+	if err != nil {
+		panic(err)
+	}
+
+	println(string(fortuneContent))
 }
 
 func readInt32(bytes []byte) int {
