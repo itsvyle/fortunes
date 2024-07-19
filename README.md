@@ -8,6 +8,8 @@ Note that this is the base feature set; all languages will not support all the o
 
 | Parameter | Description | Required | Default |
 | --- | --- | --- | --- |
-| path | Path to the file output by `fortune-generator` | true | - |
-| max-length | Max length of the generated fortune; 0 = no-limit | false | 0 |
-| min-length | Min length of the generated fortune | false | 0 |
+| -p, --path | Path to the file output by `fortune-generator` | true | - |
+| --max-length | Max length of the generated fortune; 0 = no-limit | false | 0 |
+| --min-length | Min length of the generated fortune | false | 0 |
+| -s, --show-source | Print the name of the source file for the fortune (0 or 1) | false | 0 |
+| -n | Number of iterations; mostly for testing/benchmarking | false | 1 |
