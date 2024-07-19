@@ -1,15 +1,17 @@
 # fortunes
+
 A reproduction of the Unix `fortune` utility in multiple languages, as a way to compare languages, and create dev container configurations.
 
 It can read fortunes after they have been compiled by my fortune-generator, written in Go: https://github.com/itsvyle/fortune-generator
 
 # General use
+
 Note that this is the base feature set; all languages will not support all the options; checkout the README file in each language directory
 
-| Parameter | Description | Required | Default |
-| --- | --- | --- | --- |
-| -p, --path | Path to the file output by `fortune-generator` | true | - |
-| --max-length | Max length of the generated fortune; 0 = no-limit | false | 0 |
-| --min-length | Min length of the generated fortune | false | 0 |
-| -s, --show-source | Print the name of the source file for the fortune (0 or 1) | false | 0 |
-| -n | Number of iterations; mostly for testing/benchmarking | false | 1 |
+| Parameter | Description                                                                                | Required | Default |
+| --------- | ------------------------------------------------------------------------------------------ | -------- | ------- |
+| -p        | Path to the folder containing fortunes and the `.vyle` file given by the fortune-generator | true     | -       |
+| -max      | Max length of the generated fortune; 0 = no-limit                                          | false    | 0       |
+| -min      | Min length of the generated fortune                                                        | false    | 0       |
+| -s        | Print the name of the source file for the fortune (0 or 1)                                 | false    | 0       |
+| -n        | Number of iterations; mostly for testing/benchmarking                                      | false    | 1       |
