@@ -2,12 +2,11 @@ package main
 
 import (
 	"flag"
+	"math/rand"
 	"os"
 )
 
 var path = flag.String("path", "../test-fortunes", "Path to the folder containing fortunes and the `.vyle` file given by the fortune-generator")
-var maxLength = flag.Int("max", 0, "Max length of the generated fortune; 0 = no-limit")
-var minLength = flag.Int("min", 0, "Min length of the generated fortune")
 var showSourceName = flag.Bool("s", false, "Show the source file name of the fortune")
 var iterationsCount = flag.Int("n", 1, "Number of fortunes to generate")
 
@@ -27,6 +26,7 @@ func GiveFortune() {
 	defer file.Close()
 
 	oneByte := make([]byte, 1)
+	fourBytes := make([]byte, 4)
 
 	_, err = file.Read(oneByte)
 	if err != nil {
@@ -78,21 +78,36 @@ func GiveFortune() {
 		panic(err)
 	}
 
-	entriesCount_ := make([]byte, 4)
-	_, err = file.Read(entriesCount_)
+	fourBytes = make([]byte, 4)
+	_, err = file.Read(fourBytes)
 	if err != nil {
 		panic(err)
 	}
-	entriesCount := int(entriesCount_[0])<<24 | int(entriesCount_[1])<<16 | int(entriesCount_[2])<<8 | int(entriesCount_[3])
+	entriesCount := readInt32(fourBytes)
 	print(entriesCount)
-	print(fortunes)
+
+	randomIndex := rand.Intn(entriesCount + 1)
+
+	_, err = file.Seek(int64(10*randomIndex), 1)
+	if err != nil {
+		panic(err)
+	}
+
+	_, err = file.Read(oneByte)
+	if err != nil {
+		panic(err)
+	}
+	print("From: " + fortunes[oneByte[0]].name)
+	if *showSourceName {
+	}
 
 }
 
+func readInt32(bytes []byte) int {
+	return int(bytes[0])<<24 | int(bytes[1])<<16 | int(bytes[2])<<8 | int(bytes[3])
+}
+
 func main() {
-	if *minLength > *maxLength {
-		panic("Min length cannot be greater than max length")
-	}
 	if *path == "" {
 		panic("\"-path: Path to the folder containing fortunes and the `.vyle` file given by the fortune-generator\" is required")
 	}
