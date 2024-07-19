@@ -1,0 +1,27 @@
+{
+	"name": "itsvyle: Go",
+	"image": "mcr.microsoft.com/devcontainers/go:1-1.22-bookworm",
+	"features": {
+		"ghcr.io/devcontainers/features/sshd:1": {},
+	    "ghcr.io/devcontainers/features/github-cli:1": {},
+        // Optionals:
+        // "ghcr.io/devcontainers/features/docker-in-docker:2": {},
+	},
+  "customizations": {
+		"vscode": {
+			"extensions": [
+				"golang.go",
+                "GitHub.copilot"
+			],
+			"settings": {
+				"editor.formatOnSave": true,
+				"[go]": {
+					"editor.defaultFormatter": "golang.go"
+				},
+				"go.formatTool": "gofmt",
+			}
+		}
+	},
+    // install golangci-li
+	"postCreateCommand": "curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.59.0"
+}
