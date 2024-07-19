@@ -7,7 +7,7 @@ import (
 )
 
 var path = flag.String("path", "../test-fortunes", "Path to the folder containing fortunes and the `.vyle` file given by the fortune-generator")
-var showSourceName = flag.Bool("s", false, "Show the source file name of the fortune")
+var showSourceName = flag.Bool("s", true, "Show the source file name of the fortune")
 var iterationsCount = flag.Int("n", 1, "Number of fortunes to generate")
 
 type Fortune struct {
@@ -84,11 +84,11 @@ func GiveFortune() {
 		panic(err)
 	}
 	entriesCount := readInt32(fourBytes)
-	print(entriesCount)
 
 	randomIndex := rand.Intn(entriesCount + 1)
+	randomIndex = 0
 
-	_, err = file.Seek(int64(10*randomIndex), 1)
+	_, err = file.Seek(int64(11*randomIndex), 1)
 	if err != nil {
 		panic(err)
 	}
