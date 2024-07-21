@@ -12,4 +12,6 @@ Note that this is the base feature set; all languages will not support all the o
 | --------- | ------------------------------------------------------------------------------------------ | -------- | ------- |
 | -p        | Path to the folder containing fortunes and the `.vyle` file given by the fortune-generator | true     | -       |
 | -s        | Print the name of the source file for the fortune (0 or 1)                                 | false    | 0       |
+| -max      | Max length of the generated fortune; 0 = no-limit                                          | false    | 0       |
+| -min      | Min length of the generated fortune                                                        | false    | 0       |
 | -n        | Number of iterations; mostly for testing/benchmarking                                      | false    | 1       |

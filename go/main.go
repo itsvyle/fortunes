@@ -9,6 +9,8 @@ import (
 var path = flag.String("path", "../test-fortunes", "Path to the folder containing fortunes and the `.vyle` file given by the fortune-generator")
 var showSourceName = flag.Bool("s", true, "Show the source file name of the fortune")
 var iterationsCount = flag.Int("n", 1, "Number of fortunes to generate")
+var maxLength = flag.Int("max", 0, "Max length of the generated fortune; 0 = no-limit")
+var minLength = flag.Int("min", 0, "Min length of the generated fortune")
 
 type FortuneFile struct {
 	id     byte
@@ -101,7 +103,7 @@ func GiveFortune() {
 	fortuneFileInfo := fortuneFiles[oneByte[0]]
 
 	if *showSourceName {
-		println("From: " + fortuneFileInfo.name + "\n")
+		println("From: " + fortuneFileInfo.name)
 	}
 
 	_, err = file.Read(fourBytes)
@@ -134,7 +136,7 @@ func GiveFortune() {
 		panic(err)
 	}
 
-	println(string(fortuneContent))
+	print(string(fortuneContent))
 }
 
 func readInt32(bytes []byte) int {
