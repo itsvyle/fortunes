@@ -1,6 +1,5 @@
 .ONESHELL:
 .SHELLFLAGS += -e
-.SHELLFLAGS += -o pipefail
 
 gorelease:
 	cd go
