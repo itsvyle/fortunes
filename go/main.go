@@ -25,12 +25,15 @@ func GiveFortune(file *os.File) {
 		println("Could not find a fortune with the given constraints")
 		return
 	}
-	file.Seek(0, 0)
+	_, err := file.Seek(0, 0)
+	if err != nil {
+		panic(err)
+	}
 
 	oneByte := make([]byte, 1)
 	fourBytes := make([]byte, 4)
 
-	_, err := file.Read(oneByte)
+	_, err = file.Read(oneByte)
 	if err != nil {
 		panic(err)
 	}
@@ -80,7 +83,6 @@ func GiveFortune(file *os.File) {
 		panic(err)
 	}
 
-	fourBytes = make([]byte, 4)
 	_, err = file.Read(fourBytes)
 	if err != nil {
 		panic(err)
