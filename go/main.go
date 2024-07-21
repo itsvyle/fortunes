@@ -6,8 +6,8 @@ import (
 	"os"
 )
 
-var path = flag.String("path", "../test-fortunes", "Path to the folder containing fortunes and the `.vyle` file given by the fortune-generator")
-var showSourceName = flag.Bool("s", true, "Show the source file name of the fortune")
+var path = flag.String("path", "", "Path to the folder containing fortunes and the `.vyle` file given by the fortune-generator")
+var showSourceName = flag.Bool("s", false, "Show the source file name of the fortune")
 var iterationsCount = flag.Int("n", 1, "Number of fortunes to generate")
 var maxLength = flag.Int("max", 0, "Max length of the generated fortune; 0 = no-limit")
 var minLength = flag.Int("min", 0, "Min length of the generated fortune")
@@ -18,19 +18,19 @@ type FortuneFile struct {
 	name   string
 }
 
-func GiveFortune() {
-	vyleFile := *path + "/fortunes.vyle"
-	// get a handle to the file
-	file, err := os.OpenFile(vyleFile, os.O_RDONLY, 0644)
-	if err != nil {
-		panic(err)
+var triesCount = 0
+
+func GiveFortune(file *os.File) {
+	if triesCount > 10 {
+		println("Could not find a fortune with the given constraints")
+		return
 	}
-	defer file.Close()
+	file.Seek(0, 0)
 
 	oneByte := make([]byte, 1)
 	fourBytes := make([]byte, 4)
 
-	_, err = file.Read(oneByte)
+	_, err := file.Read(oneByte)
 	if err != nil {
 		panic(err)
 	}
@@ -102,10 +102,6 @@ func GiveFortune() {
 	}
 	fortuneFileInfo := fortuneFiles[oneByte[0]]
 
-	if *showSourceName {
-		println("From: " + fortuneFileInfo.name)
-	}
-
 	_, err = file.Read(fourBytes)
 	if err != nil {
 		panic(err)
@@ -117,6 +113,16 @@ func GiveFortune() {
 		panic(err)
 	}
 	fortuneLength := readInt32(fourBytes)
+
+	if *maxLength > 0 && fortuneLength > *maxLength {
+		triesCount++
+		GiveFortune(file)
+		return
+	} else if *minLength > 0 && fortuneLength < *minLength {
+		triesCount++
+		GiveFortune(file)
+		return
+	}
 
 	fortuneFilePath := *path + "/" + fortuneFileInfo.name
 	fortuneFile, err := os.OpenFile(fortuneFilePath, os.O_RDONLY, 0644)
@@ -136,6 +142,9 @@ func GiveFortune() {
 		panic(err)
 	}
 
+	if *showSourceName {
+		println("From: " + fortuneFileInfo.name)
+	}
 	print(string(fortuneContent))
 }
 
@@ -144,10 +153,21 @@ func readInt32(bytes []byte) int {
 }
 
 func main() {
+	flag.Parse()
+
 	if *path == "" {
 		panic("\"-path: Path to the folder containing fortunes and the `.vyle` file given by the fortune-generator\" is required")
 	}
+
+	vyleFile := *path + "/fortunes.vyle"
+	// get a handle to the file
+	file, err := os.OpenFile(vyleFile, os.O_RDONLY, 0644)
+	if err != nil {
+		panic(err)
+	}
+	defer file.Close()
+
 	for i := 0; i < *iterationsCount; i++ {
-		GiveFortune()
+		GiveFortune(file)
 	}
 }
