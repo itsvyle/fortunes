@@ -10,7 +10,7 @@ var path = flag.String("path", "../test-fortunes", "Path to the folder containin
 var showSourceName = flag.Bool("s", true, "Show the source file name of the fortune")
 var iterationsCount = flag.Int("n", 1, "Number of fortunes to generate")
 
-type Fortune struct {
+type FortuneFile struct {
 	id     byte
 	weight byte
 	name   string
@@ -42,22 +42,22 @@ func GiveFortune() {
 	}
 	fortunesCount := int(oneByte[0])
 
-	fortunes := make([]Fortune, fortunesCount)
+	fortuneFiles := make([]FortuneFile, fortunesCount)
 	for i := range fortunesCount {
-		fortune := Fortune{}
+		fortuneFile := FortuneFile{}
 
 		_, err = file.Read(oneByte)
 		if err != nil {
 			panic(err)
 		}
-		fortune.id = oneByte[0]
+		fortuneFile.id = oneByte[0]
 
 		// weight
 		_, err = file.Read(oneByte)
 		if err != nil {
 			panic(err)
 		}
-		fortune.weight = oneByte[0]
+		fortuneFile.weight = oneByte[0]
 
 		// name len
 		_, err = file.Read(oneByte)
@@ -70,8 +70,8 @@ func GiveFortune() {
 		if err != nil {
 			panic(err)
 		}
-		fortune.name = string(name)
-		fortunes[i] = fortune
+		fortuneFile.name = string(name)
+		fortuneFiles[i] = fortuneFile
 	}
 	// skip 10 empty bytes
 	if _, err = file.Seek(10, 1); err != nil {
@@ -86,21 +86,22 @@ func GiveFortune() {
 	entriesCount := readInt32(fourBytes)
 
 	randomIndex := rand.Intn(entriesCount + 1)
-	randomIndex = 0
 
-	_, err = file.Seek(int64(11*randomIndex), 1)
-	if err != nil {
-		panic(err)
+	if randomIndex > 0 {
+		_, err = file.Seek(int64(10*randomIndex), 1)
+		if err != nil {
+			panic(err)
+		}
 	}
 
 	_, err = file.Read(oneByte)
 	if err != nil {
 		panic(err)
 	}
-	fortune := fortunes[oneByte[0]]
+	fortuneFileInfo := fortuneFiles[oneByte[0]]
 
 	if *showSourceName {
-		println("From: " + fortune.name + "\n")
+		println("From: " + fortuneFileInfo.name + "\n")
 	}
 
 	_, err = file.Read(fourBytes)
@@ -115,7 +116,7 @@ func GiveFortune() {
 	}
 	fortuneLength := readInt32(fourBytes)
 
-	fortuneFilePath := *path + "/" + fortune.name
+	fortuneFilePath := *path + "/" + fortuneFileInfo.name
 	fortuneFile, err := os.OpenFile(fortuneFilePath, os.O_RDONLY, 0644)
 	if err != nil {
 		panic(err)
