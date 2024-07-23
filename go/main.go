@@ -6,7 +6,7 @@ import (
 	"os"
 )
 
-var path = flag.String("path", "", "Path to the folder containing fortunes and the `fortunes.vyle` file given by the fortune-generator")
+var path = flag.String("path", GetHomeDir() + "/fortunes", "Path to the folder containing fortunes and the `fortunes.vyle` file given by the fortune-generator")
 var showSourceName = flag.Bool("s", false, "Show the source file name of the fortune")
 var iterationsCount = flag.Int("n", 1, "Number of fortunes to generate")
 var maxLength = flag.Int("max", 0, "Max length of the generated fortune; 0 = no-limit")
@@ -186,4 +186,12 @@ func main() {
 			println()
 		}
 	}
+}
+
+func GetHomeDir() string {
+	dirname, err := os.UserHomeDir()
+    if err != nil {
+        panic( err )
+    }
+    return dirname
 }

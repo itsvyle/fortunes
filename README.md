@@ -4,6 +4,8 @@ A reproduction of the Unix `fortune` utility in multiple languages, as a way to 
 
 It can read fortunes after they have been compiled by my fortune-generator, written in Go: https://github.com/itsvyle/fortune-generator
 
+By default, it'll look for a `fortunes.vyle` folder and it's associated fortunes in ~/.config/fortunes
+
 # General use
 
 Note that this is the base feature set; all languages will not support all the options; checkout the README file in each language directory
