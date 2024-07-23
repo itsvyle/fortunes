@@ -6,11 +6,16 @@ import (
 	"os"
 )
 
-var path = flag.String("path", "", "Path to the folder containing fortunes and the `.vyle` file given by the fortune-generator")
+var path = flag.String("path", "", "Path to the folder containing fortunes and the `fortunes.vyle` file given by the fortune-generator")
 var showSourceName = flag.Bool("s", false, "Show the source file name of the fortune")
 var iterationsCount = flag.Int("n", 1, "Number of fortunes to generate")
 var maxLength = flag.Int("max", 0, "Max length of the generated fortune; 0 = no-limit")
 var minLength = flag.Int("min", 0, "Min length of the generated fortune")
+
+var versionFlag = flag.Bool("version", false, "prints the version")
+
+var version string = "unknown"
+var date string = "unknown"
 
 type FortuneFile struct {
 	id     byte
@@ -156,6 +161,12 @@ func readInt32(bytes []byte) int {
 
 func main() {
 	flag.Parse()
+
+	if *versionFlag {
+		println("Version:", version)
+		println("Date:", date)
+		return
+	}
 
 	if *path == "" {
 		panic("\"-path: Path to the folder containing fortunes and the `.vyle` file given by the fortune-generator\" is required")
