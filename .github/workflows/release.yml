@@ -76,7 +76,7 @@ jobs:
               uses: actions/download-artifact@v4
               with:
                   name: go-dist
-                  path: go/dist
+                  path: go/dist/*
 
             - name: Centralize release files
               run: make centralize_release_files
