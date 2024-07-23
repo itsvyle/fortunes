@@ -1,0 +1,89 @@
+name: Create Release
+run-name: Creating release ${{ inputs.tag_name }}
+on:
+    workflow_dispatch:
+        inputs:
+            tag_name:
+                description: "Version name; e.g. 1.0.0; DON'T PUT A V IN FRONT OF IT"
+                required: true
+            release_go:
+                type: boolean
+                description: "Release Go binary"
+                default: false
+
+concurrency:
+    group: ${{ github.repository }}
+    cancel-in-progress: true
+
+env:
+    VERSION_TAG: ${{ inputs.tag_name }}
+
+jobs:
+    validate_input:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Validate tagname
+              id: validate_input
+              run: |
+                  if [[ ${{ env.VERSION_TAG }} =~ ^v ]]; then
+                      echo "Tag name should not start with a v"
+                      exit 1
+                  fi
+                  if ! [[ ${{ env.VERSION_TAG }} =~ ^[0-9]\.[0-9]{1,2}\.[0-9]{1,2}$ ]]; then
+                      echo "Version tag does not match the pattern."
+                      exit 1
+                  fi
+
+    go:
+        runs-on: ubuntu-latest
+        needs: validate_input
+        if: ${{ inputs.release_go == true }}
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v4
+
+            - name: Setup Go
+              uses: actions/setup-go@v5
+              with:
+                  go-version: 1.22.3
+                  cache: true
+
+            - name: Install go-releaser
+              run: echo 'deb [trusted=yes] https://repo.goreleaser.com/apt/ /' | sudo tee /etc/apt/sources.list.d/goreleaser.list && sudo apt-get update && sudo apt-get install -y goreleaser
+
+            - name: Run go-releaser
+              run: _VERSION='${{env.VERSION_TAG}}' make gorelease
+
+            - name: Upload artifact
+              uses: actions/upload-artifact@v4
+              with:
+                  name: go-dist
+                  path: go/dist/*
+
+    create_release:
+        runs-on: ubuntu-latest
+        needs: ["validate_input", "go"]
+        steps:
+            - name: Get go files
+              if: ${{ inputs.release_go == true }}
+              uses: actions/download-artifact@v4
+              with:
+                  name: go-dist
+                  path: go/dist
+
+            - name: Centralize release files
+              run: make centralize_release_files
+
+            - name: Create Release
+              id: create_release
+              uses: softprops/action-gh-release@v2
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+              with:
+                  name: v${{ env.VERSION_TAG }} Release
+                  tag_name: ${{ env.VERSION_TAG }}
+                  draft: true
+                  generate_release_notes: true
+                  target_commitish: ${{ github.sha }}
+                  files: |
+                      dist/*
