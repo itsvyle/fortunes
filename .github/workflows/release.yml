@@ -9,7 +9,7 @@ on:
             release_go:
                 type: boolean
                 description: "Release Go binary"
-                default: false
+                default: true
 
 concurrency:
     group: ${{ github.repository }}
