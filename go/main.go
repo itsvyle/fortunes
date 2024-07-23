@@ -171,5 +171,8 @@ func main() {
 
 	for i := 0; i < *iterationsCount; i++ {
 		GiveFortune(file)
+		if i < *iterationsCount-1 {
+			println()
+		}
 	}
 }
