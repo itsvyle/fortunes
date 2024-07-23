@@ -163,6 +163,7 @@ func main() {
 	flag.Parse()
 
 	if *versionFlag {
+		println("Language: Go")
 		println("Version:", version)
 		println("Date:", date)
 		return
