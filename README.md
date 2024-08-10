@@ -1,6 +1,9 @@
 # fortunes
 
-A reproduction of the Unix `fortune` utility in multiple languages, as a way to compare languages, and create dev container configurations.
+A reproduction of the Unix `fortune` utility in multiple languages, as a way to compare languages, and create dev container configurations, and to have cool stuff in my terminal
+
+![image](https://github.com/user-attachments/assets/629c9281-5774-441d-b0a6-8649b0cd5a0d)
+
 
 It can read fortunes after they have been compiled by my fortune-generator, written in Go: https://github.com/itsvyle/fortune-generator
 
