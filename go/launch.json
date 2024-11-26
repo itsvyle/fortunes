@@ -5,12 +5,25 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Launch main server",
+            "name": "Debug Test Function",
+            "type": "go",
+            "request": "launch",
+            "mode": "test",
+            "cwd": "${fileDirname}",
+            "program": "${fileDirname}",
+            "args": [
+                "-test.run",
+                "TestFromFile"
+            ],
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "Launch Package",
             "type": "go",
             "request": "launch",
             "mode": "auto",
             "program": "${fileDirname}",
             "console": "integratedTerminal"
-        }
+        },
     ]
 }
